@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        .hidden {
+            display: none;
+        }
+
+    </style>
+</head>
+<>
+
+    <h1>filter</h1>
+    <hr>
+
+    <form id="searchForm">
+        <p>
+            <input id="search" type="search" autocomplete="off" autofocus>
+            <input type="submit" value="검색">
+        </p>
+
+    </form>
+
+    <ul>
+        <li>왕제은</li>
+        <li>한동근</li>
+        <li>배진호</li>
+        <li>최현웅</li>
+        <li>황상기</li>
+        <li>김유빈</li>
+        <li>유형주</li>
+        <li>황민정</li>
+    </ul>
+
+
+    <script>
+        //  filter는 boolean
+        //  조건에 맞는 애들은 남기고
+        //  조건에 맞지 않으면 날리기
+
+        const searchForm = document.getElementById('searchForm')
+        const ul = document.querySelector('ul')
+
+
+        //  input 에 대한 key 이벤트를 사용하지 않고
+        //  submit 에 대한 click 이벤트를 사용하지 않고
+        //  form 에 대한 submit 이벤트를 사용한다
+        //  ( form태그를 쓴다면.. form 이 제출될때 이벤트가 발생하도록 해야함 )
+        //  왜냐하면 form이 submit 되면 새로운 요청이 발생하고, 이후의 자바 스크립트는 무시.
+
+
+        searchForm.onsubmit = function(event) {
+            //  form 에 대한 submit 이벤트는 반드시 !! 첫줄에 이벤트 기본작동을 막아야함
+            event.preventDefault()
+
+
+            //  검색어 가져오기
+            const searchValue = event.target.querySelector('input').value
+            console.log(searchValue)
+
+
+            //  대상을 배열 형태로 불러옴
+            const arr  = Array.from(document.querySelectorAll('ul > li'))
+            arr.forEach(e => e.classList.remove('hidden'))
+
+
+            //  검색어를 포함하지 않는 배열을 별도로 불러와서 모두 hidden 처리하기
+            //  arr.filter 는 새로운 배열을 반환함(arr2 로 저장)
+            //  arr.filter의 콜백함수는 boolean 타입을 반환하면 됨
+            //  (조건을 만족하는 내용만 남기고 모두 제거)
+            const arr2 = arr.filter(e => e.innerText.includes(searchValue) == false)    //  innerText 가 검색어를 포함하지 않으면
+            arr2.forEach(e => e.classList.add('hidden'))    //  hidden 이라는 list에 넣기
+        }
+    </script>
+
+</body>
+</html>

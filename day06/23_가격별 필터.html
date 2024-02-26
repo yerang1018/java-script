@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        #root {
+            width: 900px;
+            margin: auto;
+            display: flex;
+        }
+        .left {
+            width: 150px;
+            display: flex;
+            flex-direction: column;
+        }
+        .item {
+            display: flex;
+        }
+        .item > div {
+            border: 1px solid black;
+            flex: 1;
+            padding: 5px 10px;
+        }
+        .item > div:nth-child(1) {
+            flex: 4;
+        }
+        .right {
+            overflow-y: auto;        /* 데이터의 양에 따라, 스크롤바 크기 조정 */
+            overflow-x: hidden;     /*  x축은 스크롤바 안보이게 하고  */
+                /* viewHeight : 보여지는 높이 (브라우저 창 기준) */
+        }
+        .hidden {
+            display: none;
+        }
+
+    </style>
+</head>
+<body>
+    <h1>JSON 파일에 filter 적용</h1>
+    <hr>
+    <div id="root">
+        <div class="left">
+            <label><input type="checkbox" name="p0">10000원 미만</label>
+            <label><input type="checkbox" name="p1">10000원 ~</label>
+            <label><input type="checkbox" name="p2">20000원 ~</label>
+            <label><input type="checkbox" name="p3">30000원 ~</label>
+            <label><input type="checkbox" name="p4">40000원 ~</label>
+            <label><input type="checkbox" name="p5">50000원 ~</label>
+        </div>
+        <div class="right"></div>
+    </div>
+
+    <script src="homeplus(berry).js"></script>
+
+
+    <script>
+
+    const root = document.querySelector('div.right')
+    
+    //  먼저 체크박스 리스트 부르고
+    const boxList = document.querySelectorAll('div.left > label > input[type="checkbox"]')
+
+    //  필터
+    function priceFilter(event) {
+    
+        
+        //  체크박스 리스트만
+        const checkArr = Array.from(boxList).filter(e => e.checked).map(e => +e.name.replace('p', ''))   //  0, 1, ..
+        console.log(checkArr)
+
+        const priceList = Array.from(document.querySelectorAll('.item'))
+
+        
+        priceList.forEach(e => {
+            const price = Math.floor(+e.children[1].innerText / 10000)
+            
+            if(checkArr.includes(price)) {
+                e.classList.remove('hidden')
+            }
+            else {
+                e.classList.add('hidden')
+            }
+            if(checkArr.length == 0) {  //  checkArr == null 이라고 하면, 안됨
+                                        //  배열에 데이터가 없는 것은 null 이 아니다.
+                                        //  null 은 참고할 대상이 없음을 뜻함
+                e.classList.remove('hidden')
+            }
+        })
+    }
+
+    function load() {
+        arr.forEach(dto => {
+            let tag = ''
+            tag += `<div class="item">`
+            tag += `    <div class="name">${dto.name}</div>`
+            tag += `    <div class="price">${dto.price }</div>`
+            tag += `    <div class="grade">${dto.grade}</div>`
+            tag += `</div>`
+            root.innerHTML += tag
+        })
+    }
+
+    window.addEventListener('DOMContentLoaded', load)
+
+    boxList.forEach(box => box.onclick = priceFilter)
+
+</script>
+    
+</body>
+</html>

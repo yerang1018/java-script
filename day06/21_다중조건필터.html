@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        #root {
+            display: flex;
+            width: 500px;
+            height: 350px;
+        }
+        .left {
+            display: flex;
+            flex-direction: column;
+            width: 100px;
+        }
+        .left > label {
+            flex: 1
+        }
+        table {
+            border-collapse: collapse;
+            border: 2px solid black;
+        }
+        td {
+            border: 1px solid grey;
+            padding: 10px 20px;
+        }
+        tr.hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>다중조건필터</h1>
+    <hr>
+
+
+    <!--
+    
+        arr.forEach         단순 반복
+        arr.filter          조건 필터
+        arr.toSorted        정렬
+        arr.map             재구성
+        arr.slice           잘라내기
+        arr.includes        포함여부 확인
+
+    -->
+
+    <div id="root">
+        <div class="left">
+            <label><input type="checkbox" name="a10">10대</label>
+            <label><input type="checkbox" name="a20">20대</label>
+            <label><input type="checkbox" name="a30">30대</label>
+            <label><input type="checkbox" name="a40">40대</label>
+            <label><input type="checkbox" name="a50">50대</label>
+        </div>
+
+        <div class="right">
+            <table>
+                <tr>
+                    <td>남도일</td>
+                    <td>17</td>
+                </tr>
+                <tr>
+                    <td>최현웅</td>
+                    <td>27</td>
+                </tr>
+                <tr>
+                    <td>이지은</td>
+                    <td>31</td>
+                </tr>
+                <tr>
+                    <td>홍진호</td>
+                    <td>42</td>
+                </tr>
+                <tr>
+                    <td>이서진</td>
+                    <td>53</td>
+                </tr>
+                <tr>
+                    <td>신짱구</td>
+                    <td>12</td>
+                </tr>
+                <tr>
+                    <td>김민정</td>
+                    <td>23</td>
+                </tr>
+                <tr>
+                    <td>김동준</td>
+                    <td>32</td>
+                </tr>
+
+
+
+
+            </table>
+
+        </div>
+    </div>
+
+
+    <!--    다중 필터   -->
+    <script>
+        //  boxList 는 check box의 내용을 모두 불러온것 (querySelect 로 불러온건 모두 nodeList)
+        const boxList = document.querySelectorAll('div.left > label >  input[type="checkbox"]')     //  NodeList
+
+
+        function filterHandler(event) {
+            //  배열에서 원하는 속성만 가져오거나
+            //  별도의 속성을 추가해서 가져올때 Array.map 사용
+
+            
+            const checkedArray = Array.from(boxList).filter(e => e.checked).map(e => +e.name.replace('a', ''))
+            //  새로운 배열 = nodeList 였던 boxList를 배열로 바꾸고
+            //               input checkbox 가 check 된 애들만 filter
+            //               map 을 이용하여 name 속성에 있는 데이터에서 a 를 지우고(== replace) 정수(== +)만 남긴다
+            //  결과물 : 10, 20, 30, 40, 50
+            
+
+            console.log(checkedArray)
+
+
+            const trList = document.querySelectorAll('table > tbody > tr')
+
+            trList.forEach(tr => {
+                //  floor 를 이용하여 소수점 아래 지움
+                const age = Math.floor(+tr.children[1].innerText / 10) * 10     //  예시 ) 23 / 10 == 2 -> * 10
+                                                                                //  결과 ) 20  (10, 20 ..의 형태로 남길 수 있게)
+
+                if(checkedArray.includes(age)) {    //  체크가 되어있는 목록에서 해당 나이가 있다면
+                    tr.classList.remove('hidden')   //  hidden 목록에서 제거
+                }
+                else {
+                    tr.classList.add('hidden')      //  아니라면, hidden 에 추가
+                }
+            })
+            
+        }
+
+        boxList.forEach(box => box.onclick = filterHandler)
+    </script>
+
+
+<!--
+
+    다중필터
+
+    <script>
+        //  boxList 는 check box의 내용을 모두 불러온것 (querySelect 로 불러온건 모두 nodeList)
+        const boxList = document.querySelectorAll('div.left > input[type="checkbox"]')
+
+            function filterHandler(event) {     //  filterHandler 함수 코드 시작
+            //  배열에서 원하는 속성만 가져오거나
+            //  별도의 속성을 추가해서 가져올때 Array.map 사용
+
+        
+            const arr = Array.from(boxList).filter(e => e.checked).map(e => +e.name.replace('a', ''))
+
+            //  새로운 배열 = nodeList 였던 boxList를 배열로 바꾸고
+            //               input checkbox 가 check 된 애들만 filter
+            //               map 을 이용하여 name 속성에 있는 데이터에서 a 를 지우고(== replace) 정수(== +)만 남긴다
+            //  결과물 : 10, 20, 30, 40, 50
+            
+            
+            
+
+            //  trList만들기
+            const arr2 = document.querySelector('table > tr')
+
+            trList = Array.from(arr2)
+
+            //  trList forEach
+            trList.forEach(e => {
+
+                //  floor 를 이용하여 소수점 아래 지움
+                const age = Math.floor(+e.children[1].innerText / 10) * 10
+                //  예시 ) 23 / 10 == 2 -> * 10
+                //  결과 ) 20  (10, 20 ..의 형태로 남길 수 있게)
+                
+                
+                //  체크가 되어있는 목록에서 해당 나이가 있다면
+                //  hidden 목록에서 제거
+                if(arr.includes(age) == true) {
+                    e.classList.remove('hidden')
+                }
+                //  아니라면, hidden 에 추가
+                else {
+                    e.classList.add('hidden')
+                }
+                
+                
+                
+                
+                
+                
+            })
+        
+        }
+        boxList.forEach(box => box.onclick = filterHandler)
+    </script>
+    
+-->
+
+
+<!--    클릭이벤트의 대상만 처리한다면(다중 조건 X)
+<script>
+    const boxList = document.querySelectorAll('div.left > label >  input[type="checkbox"]')
+
+    function filterHandler(event) {
+        //  배열에서 원하는 속성만 가져오거나
+        //  별도의 속성을 추가해서 가져올때 Array.map 사용
+        
+        const checkedArray = Array.from(boxList).map(e =>  {
+            const ob = {
+                age : +e.name.replace('a', ''),
+                checked  : e.checked
+            }
+            return ob
+        })
+        console.log(checkedArray)
+
+        //  만약, 다중조건이 아니라 클릭이벤트의 대상만 처리한다면
+        const flag = +event.target.name.replace('a', '')
+
+        const trList = document.querySelectorAll('table > tbody > tr')
+
+        trList.forEach(tr => {
+            const value = +tr.children[1].innerText
+
+            if(flag <= value && value < flag + 10 ) {
+                tr.classList.remove('hidden')
+            }
+            else {
+                tr.classList.add('hidden')
+            }
+        })
+        
+    }
+
+    boxList.forEach(box => box.onclick = filterHandler)
+</script>
+
+-->
+</body>
+</html>

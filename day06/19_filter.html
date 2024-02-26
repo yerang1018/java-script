@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .item {
+            display: flex;
+            max-width: 1200px;
+            margin: auto;
+        }
+        .item > div {
+            flex: 2;
+            border: 1px solid grey;
+            padding: 5px 10px;
+        }
+        .item > div:nth-child(1) { flex: 5; }
+        .item > div:nth-child(2) { flex: 4; }
+        .columns {
+            background-color: #eee;
+            position: sticky;
+            top: 0;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>부산광역시 주차장 요금 현황</h1>
+    <hr>
+
+    <div id="root">
+        <div class="columns item">
+            <div order="1" class="pkNam"><span class="text">주차장이름</span><span class="arrow"></span></div>
+            <div order="1" class="guNm"><span class="text">지역</span><span class="arrow"></span></div>
+            <div order="1" class="pkFm"><span class="text">형식</span><span class="arrow"></span></div>
+            <div order="1" class="tenMin"<span class="text">10분주차요금</span><span class="arrow"></span></div>
+            <div order="1" class="ftDay"><span class="text">일주차요금</span><span class="arrow"></span></div>
+            <div order="1" class="ftMon"><span class="text">월주차요금</span><span class="arrow"></span></div>
+            <div order="1" class="pkCnt"><span class="text">전체주차대수</span><span class="arrow"></span></div>
+        </div>
+
+        <div class="main"></div>  <!-- 내용이 나와야할 곳-->
+
+    </div>
+    
+    <script src="parking.js"></script>
+    <script>
+        
+        //  JSON 데이터 출력하기
+        const arr2 = arr.slice(0, 300)
+        console.log(arr2)
+
+        const main = document.querySelector('.main')
+        arr2.forEach(e => {
+            let tag = ''
+            tag += `<div class="item">`
+            tag += `    <div class="pkNam">${e.pkNam }</div>`
+            tag += `    <div class="guNm">${e.guNm }</div>`
+            tag += `    <div class="pkFm">${e.pkFm }</div>`
+            tag += `    <div class="tenMin">${e.tenMin == '-' ? 0 : e.tenMin}</div>`
+            tag += `    <div class="ftDay">${e.ftDay == '-' ? 0 : e.ftDay }</div>`
+            tag += `    <div class="ftMon">${e.ftMon == '-' ? 0 : e.ftMon }</div>`
+            tag += `    <div class="pkCnt">${e.pkCnt }</div>`
+            tag += `</div>`
+            main.innerHTML += tag
+        })
+        
+
+
+        //  클릭이벤트 설정
+        const columns = Array.from(document.querySelectorAll('div.columns > div'))  //  배열로 만들기
+
+        //  클릭이벤트
+        function sortHandler(event) {
+   
+            //  내가 클릭한 대상은 columns에서 몇번째 인덱스를 가지는가?
+            let target = event.target
+            while(target.tagName != 'DIV') {
+                target = target.parentNode
+            }
+
+            const idx = columns.indexOf(target)
+            console.log(idx)        //  idx가 -1 이라면 대상을 찾지 못했다는 뜻.
+
+
+            const order = +target.getAttribute('order')     //  order가 1이라면
+            
+            target.setAttribute('order', -order)    //  그 다음은 -1 이 나올것임(이것을 반환할때 곱해주면 함수실행할때마다 값이 바뀜)
+            
+            document.querySelectorAll('span.arrow').forEach(e => e.innerText = '')
+
+            target.querySelector('span.arrow').innerText = order > 0 ? '🔺' : '🔻'
+
+            const arr3 = Array.from(document.querySelectorAll('div.main > div.item'))
+
+            arr3.sort((e1, e2)=> {
+           
+                //  문자열이 아닌, 정수형태로 비교하겠다 (+)
+                const v1 = +e1.children[idx].innerText   //  각 컬럼을 [0] [1] ...  == [idx]
+                const v2 = +e2.children[idx].innerText
+                
+                return (v1 <= v2 ? 1 : -1) * order     //  기본적으로는 오름차순으로 정렬해두기
+                
+                //  children :  HTMLCollection 형태, index 는 존재함
+                //  저번에      +a.querySelector('td:nth-child(2)').innerText 처럼
+                //  원하는 컬럼의 데이터만 뽑아올 수 있도록 한다
+
+            })
+
+            arr3.forEach(e => main.appendChild(e))
+            
+        }
+        columns.slice(3, 7).forEach(e => e.onclick = sortHandler)   //  컬럼[3]번째부터 클릭이벤트 적용
+
+
+
+    </script>
+</body>
+</html>
