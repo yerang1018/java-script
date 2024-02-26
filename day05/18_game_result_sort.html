@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        #root , .title {
+            max-width: 1400px;
+            margin: auto;
+        }
+        .item {
+            display: flex;
+        }
+        .title > div , .item > div {
+            border: 1px solid grey;
+            flex: 1;
+            padding: 5px;
+        }
+        .title {
+            display: flex;
+            background-color: #eee;
+        }
+        .title > div:nth-child(1) , .item > div:nth-child(1) {
+            flex: 3;
+        }
+
+        .item.blue {
+            background-color: rgb(233, 245, 255);
+        }
+
+        .item.red {
+            background-color: #ffe9f0;
+        }
+    </style>
+</head>
+<body>
+    
+    <h1>게임 결과 정렬하기</h1>
+    <hr>
+
+<p id="sort">
+    <button id="kill-desc">킬 많은 순</button>
+    <button id="kill-asc">킬 적은 순</button>
+    <button id="assist-desc">어시 많은 순</button>
+    <button id="damage-desc">데미지 많은 순</button>
+</p>
+
+<div class="title">
+    <div order="1" class="user">유저명<span class="arrow"></span></div>
+    <div order="1" class="champion">챔피언<span class="arrow"></span></div>
+    <div order="1" class="team">팀<span class="arrow"></span></div>
+    <div order="1" class="kill">킬<span class="arrow"></span></div>
+    <div order="1" class="death">데스<span class="arrow"></span></div>
+    <div order="1" class="assist">어시<span class="arrow"></span></div>
+    <div order="1" class="damage">데미지<span class="arrow"></span></div>
+</div>
+
+<div id="root"></div>
+
+
+<script src="opgg_result.js"></script>
+
+<script>
+
+    const root = document.getElementById('root')
+
+    //  정렬 함수 
+    function sort(event) {
+        const id = event.target.id
+        const column = id.split("-")[0]
+        const order = id.split("-")[1]
+
+
+        const arr2 = Array.from(document.querySelectorAll('#root > .item'))
+
+        arr2.sort((e1, e2) => {
+            const v1 = +e1.querySelector('.' + column).innerText
+            const v2 = +e2.querySelector('.' + column).innerText
+
+            return v1 - v2 > 0 ? 1 : -1
+        })
+
+        if(order == 'desc') {
+            arr2.reverse()
+        }
+
+        arr2.forEach(e => root.appendChild(e))
+    }
+
+    const btnList = document.querySelectorAll('#sort > button')
+    btnList.forEach(btn => btn.onclick = sort)
+
+    //  내용 출력 함수
+    function load() {
+        
+        arr.forEach(dto => {
+            let tag = '';
+
+            tag += `<div class="item ${dto.team == '블루' ? 'blue' : 'red'}">`;       //  조건에 따라 class명이 추가됨
+            tag += `    <div class="user">${dto.user}</div>`;
+            tag += `    <div class="champion">${dto.champion }</div>`;
+            tag += `    <div class="team">${dto.team}</div>`;
+            tag += `    <div class="kill">${dto.kill}</div>`;
+            tag += `    <div class="death">${dto.death}</div>`;
+            tag += `    <div class="assist">${dto.assist}</div>`;
+            tag += `    <div class="damage">${dto.damage}</div>`;
+            tag += `</div>`;
+
+        
+            root.innerHTML += tag;
+        })
+
+    }
+    window.addEventListener('DOMContentLoaded', load)
+    
+
+
+</script>
+
+</body>
+</html>
